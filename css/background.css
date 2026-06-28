@@ -1,0 +1,313 @@
+/* ==========================================================================
+   CINEMATIC BACKGROUND SYSTEM
+   ========================================================================== */
+
+/* Root container — sits behind everything */
+#cinematicBackground {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    background: #03010a;
+}
+
+/* Shared parallax layer base */
+.parallax-layer {
+    position: absolute;
+    top: -10%; left: -10%;
+    width: 120%; height: 120%;
+    will-change: transform;
+    transition: transform 0.1s linear;
+}
+
+/* --- Layer 1: Base Fantasy Landscape Image --- */
+.layer-base {
+    background-image: url('../assets/images/background.png');
+    background-size: cover;
+    background-position: center 40%;
+    filter: saturate(1.4) brightness(0.75);
+    z-index: 1;
+}
+
+/* --- Layer 2: Aurora Borealis --- */
+.layer-aurora {
+    z-index: 2;
+    background: transparent;
+    mix-blend-mode: screen;
+}
+
+.layer-aurora::before,
+.layer-aurora::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -20%;
+    width: 140%; height: 60%;
+    border-radius: 50%;
+    filter: blur(60px);
+    mix-blend-mode: screen;
+    opacity: 0.7;
+}
+
+.layer-aurora::before {
+    background: radial-gradient(ellipse 80% 40% at 30% 30%,
+        rgba(120, 40, 180, 0.9) 0%,
+        rgba(80, 0, 140, 0.7) 30%,
+        transparent 70%
+    );
+    animation: auroraShift1 18s ease-in-out infinite alternate;
+}
+
+.layer-aurora::after {
+    background: radial-gradient(ellipse 70% 35% at 70% 20%,
+        rgba(40, 180, 160, 0.6) 0%,
+        rgba(180, 60, 140, 0.5) 40%,
+        transparent 70%
+    );
+    animation: auroraShift2 22s ease-in-out infinite alternate;
+}
+
+/* --- Layer 3: Moon --- */
+.layer-moon {
+    z-index: 3;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-top: 8%;
+    padding-right: 12%;
+    pointer-events: none;
+}
+
+.moon-body {
+    position: relative;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 38%,
+        #fff8e1 0%,
+        #ffe9a0 30%,
+        #f0c060 60%,
+        #c8903a 100%
+    );
+    box-shadow:
+        0 0 40px 10px rgba(255, 230, 100, 0.5),
+        0 0 80px 30px rgba(255, 200, 50, 0.25),
+        inset -15px -10px 30px rgba(0,0,0,0.25);
+    z-index: 5;
+    animation: moonBreath 8s ease-in-out infinite alternate;
+    flex-shrink: 0;
+}
+
+.moon-crater {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.moon-halo {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 220, 80, 0.15);
+    z-index: 4;
+}
+/* These sizes are relative to the moon-body's nearest positioned ancestor (layer-moon) */
+.layer-moon .moon-body { margin-top: 0; }
+
+.moon-halo {
+    width: 220px; height: 220px;
+    animation: haloBreath 8s ease-in-out infinite alternate;
+}
+.moon-halo.halo2 {
+    width: 340px; height: 340px;
+    border-color: rgba(255, 200, 50, 0.07);
+    animation-delay: -4s;
+}
+
+/* --- Layer 4: Clouds --- */
+.layer-clouds {
+    z-index: 4;
+    pointer-events: none;
+}
+
+.cloud {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center,
+        rgba(180, 140, 220, 0.18) 0%,
+        rgba(120, 80, 180, 0.08) 50%,
+        transparent 80%
+    );
+    filter: blur(20px);
+}
+
+.cloud1 {
+    width: 500px; height: 120px;
+    top: 15%; left: -5%;
+    animation: cloudDrift 80s linear infinite;
+}
+.cloud2 {
+    width: 700px; height: 150px;
+    top: 25%; left: 20%;
+    opacity: 0.7;
+    animation: cloudDrift 120s linear infinite;
+    animation-delay: -40s;
+}
+.cloud3 {
+    width: 400px; height: 100px;
+    top: 10%; right: -5%;
+    animation: cloudDriftReverse 100s linear infinite;
+}
+
+/* --- Layer 5: Volumetric Light Rays --- */
+.layer-rays {
+    z-index: 3;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+.light-ray {
+    position: absolute;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom,
+        rgba(255, 220, 120, 0.12) 0%,
+        rgba(200, 150, 255, 0.08) 30%,
+        transparent 70%
+    );
+    transform-origin: top center;
+    filter: blur(8px);
+}
+
+.ray1 {
+    left: 20%;
+    width: 80px;
+    transform: rotate(-8deg) scaleX(1);
+    animation: rayPulse 12s ease-in-out infinite alternate;
+}
+.ray2 {
+    left: 40%;
+    width: 120px;
+    transform: rotate(3deg);
+    animation: rayPulse 16s ease-in-out infinite alternate;
+    animation-delay: -5s;
+}
+.ray3 {
+    right: 15%;
+    width: 70px;
+    transform: rotate(10deg);
+    animation: rayPulse 10s ease-in-out infinite alternate;
+    animation-delay: -8s;
+}
+
+/* --- Layer 6: Ground Fog --- */
+.layer-fog {
+    z-index: 5;
+    pointer-events: none;
+}
+
+.fog-band {
+    position: absolute;
+    left: -20%;
+    width: 140%;
+    border-radius: 50%;
+    filter: blur(30px);
+    background: linear-gradient(to bottom,
+        transparent 0%,
+        rgba(200, 180, 240, 0.12) 40%,
+        rgba(180, 160, 220, 0.2) 60%,
+        transparent 100%
+    );
+}
+
+.fog1 {
+    bottom: 18%;
+    height: 180px;
+    animation: fogDrift 40s ease-in-out infinite alternate;
+}
+.fog2 {
+    bottom: 8%;
+    height: 140px;
+    opacity: 0.8;
+    animation: fogDrift 55s ease-in-out infinite alternate;
+    animation-delay: -20s;
+}
+
+/* --- Scene Canvas (fireflies, butterflies, petals, shooting stars) --- */
+.scene-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 6;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   SCENE OVERLAY — blurs background behind lock screen
+   ========================================================================== */
+#scene2-password {
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+}
+
+/* Ensure scenes sit above background */
+.scene { z-index: 10; }
+#scene1-intro { z-index: 50; }
+#scene2-password { z-index: 40; }
+.scrollable-world { z-index: 30; }
+
+/* Canvases above background, below UI */
+#particlesCanvas { z-index: 7; }
+#fireworksCanvas { z-index: 100; }
+
+/* ==========================================================================
+   KEYFRAMES — Background
+   ========================================================================== */
+@keyframes auroraShift1 {
+    0%   { transform: translateX(0%)  scaleY(1); opacity: 0.6; }
+    33%  { transform: translateX(5%)  scaleY(1.1); opacity: 0.8; }
+    66%  { transform: translateX(-3%) scaleY(0.9); opacity: 0.5; }
+    100% { transform: translateX(7%)  scaleY(1.2); opacity: 0.7; }
+}
+
+@keyframes auroraShift2 {
+    0%   { transform: translateX(0%)  translateY(0); opacity: 0.5; }
+    50%  { transform: translateX(-8%) translateY(5%); opacity: 0.7; }
+    100% { transform: translateX(6%)  translateY(-3%); opacity: 0.4; }
+}
+
+@keyframes moonBreath {
+    0%   { box-shadow: 0 0 40px 10px rgba(255,230,100,0.5), 0 0 80px 30px rgba(255,200,50,0.25), inset -15px -10px 30px rgba(0,0,0,0.25); }
+    100% { box-shadow: 0 0 60px 20px rgba(255,230,100,0.7), 0 0 120px 50px rgba(255,200,50,0.35), inset -15px -10px 30px rgba(0,0,0,0.25); }
+}
+
+@keyframes haloBreath {
+    0%   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1.08); }
+}
+
+@keyframes cloudDrift {
+    0%   { transform: translateX(-110%); }
+    100% { transform: translateX(110vw); }
+}
+
+@keyframes cloudDriftReverse {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-120vw); }
+}
+
+@keyframes rayPulse {
+    0%   { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+@keyframes fogDrift {
+    0%   { transform: translateX(0) scaleX(1); opacity: 0.7; }
+    50%  { transform: translateX(3%) scaleX(1.05); opacity: 1; }
+    100% { transform: translateX(-4%) scaleX(0.95); opacity: 0.5; }
+}

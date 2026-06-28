@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AURORA - Cinematic Birthday Experience for Hadjer">
+    <title>Aurora - For Hadjer ❤️</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- CSS Modules -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/background.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Global Canvases -->
+    <canvas id="particlesCanvas" class="global-canvas"></canvas>
+    <canvas id="fireworksCanvas" class="global-canvas"></canvas>
+
+    <!-- Global UI -->
+    <div class="custom-cursor" id="cursorDot"></div>
+    <div class="custom-cursor-glow" id="cursorGlow"></div>
+
+    <!-- Cinematic Parallax Background -->
+    <div id="cinematicBackground">
+        <!-- Layer 1: Sky + landscape base image -->
+        <div class="parallax-layer layer-base" data-speed="0.01"></div>
+
+        <!-- Layer 2: Aurora Borealis (CSS gradient animation) -->
+        <div class="parallax-layer layer-aurora" data-speed="0.03"></div>
+
+        <!-- Layer 3: Moon with glow halo -->
+        <div class="parallax-layer layer-moon" data-speed="0.02">
+            <div class="moon-body">
+                <div class="moon-crater" style="top:20%;left:25%;width:25%;height:25%;"></div>
+                <div class="moon-crater" style="top:55%;left:55%;width:15%;height:15%;"></div>
+                <div class="moon-crater" style="top:40%;left:15%;width:10%;height:10%;"></div>
+            </div>
+            <div class="moon-halo"></div>
+            <div class="moon-halo halo2"></div>
+        </div>
+
+        <!-- Layer 4: Slow-drifting clouds -->
+        <div class="parallax-layer layer-clouds" data-speed="0.05">
+            <div class="cloud cloud1"></div>
+            <div class="cloud cloud2"></div>
+            <div class="cloud cloud3"></div>
+        </div>
+
+        <!-- Layer 5: Volumetric light rays -->
+        <div class="parallax-layer layer-rays" data-speed="0.04">
+            <div class="light-ray ray1"></div>
+            <div class="light-ray ray2"></div>
+            <div class="light-ray ray3"></div>
+        </div>
+
+        <!-- Layer 6: Ground fog -->
+        <div class="parallax-layer layer-fog" data-speed="0.07">
+            <div class="fog-band fog1"></div>
+            <div class="fog-band fog2"></div>
+        </div>
+
+        <!-- Canvas for butterflies, fireflies, shooting stars, petals -->
+        <canvas id="sceneCanvas" class="scene-canvas"></canvas>
+    </div>
+
+        <!-- Start Experience Trigger -->
+        <div id="startExperienceWrapper" class="start-wrapper hidden">
+            <button id="startExperienceBtn" class="luxury-button pulse-glow">🎵 Start the Experience</button>
+        </div>
+
+        <!-- Scene 8: Premium Floating Music Player -->
+        <div id="premiumMusicPlayer" class="premium-music-player hidden">
+            <div class="player-glass">
+                <div class="player-top">
+                    <div class="disc" id="musicDisc"><div class="disc-hole"></div></div>
+                    <div class="song-info">
+                        <div class="song-title" id="songTitle">Main Theme</div>
+                        <div class="song-artist">Aurora Cinematic</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <span id="currentTimeDisplay" class="time-text">0:00</span>
+                    <div class="progress-bar-wrapper" id="progressBarWrapper">
+                        <div class="progress-bar-fill" id="progressBarFill"></div>
+                    </div>
+                    <span id="durationDisplay" class="time-text">0:00</span>
+                </div>
+
+                <div class="player-controls">
+                    <button id="loopBtn" class="icon-btn small-btn active" title="Toggle Loop">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z"/></svg>
+                    </button>
+                    
+                    <button id="stopBtn" class="icon-btn small-btn" title="Stop">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M18,18H6V6H18V18Z"/></svg>
+                    </button>
+
+                    <button id="playBtn" class="icon-btn main-play hidden" title="Play">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z"/></svg>
+                    </button>
+
+                    <button id="pauseBtn" class="icon-btn main-play" title="Pause">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M14,19H18V5H14M6,19H10V5H6V19Z"/></svg>
+                    </button>
+
+                    <div class="volume-wrapper">
+                        <button id="muteBtn" class="icon-btn small-btn" title="Mute">
+                            <svg id="volumeIcon" viewBox="0 0 24 24"><path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
+                        </button>
+                        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" class="premium-volume">
+                    </div>
+                </div>
+            </div>
+            <audio id="bgMusic" preload="metadata" loop>
+                <source src="assets/audio/main-theme.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+    <div id="appContainer">
+        <!-- Scene 1: Intro Cinematic -->
+        <section id="scene1-intro" class="scene active">
+            <div class="intro-text-layer" id="introText1">For Someone Very Special</div>
+            <div class="intro-text-layer" id="introText2">A Little Surprise</div>
+            <div class="intro-text-layer" id="introText3">For Hadjer ❤️</div>
+            <div class="portal" id="introPortal">
+                <div class="portal-ring"></div>
+                <div class="portal-ring"></div>
+                <div class="portal-glow"></div>
+            </div>
+        </section>
+
+        <!-- Scene 2: Password Screen -->
+        <section id="scene2-password" class="scene">
+            <div class="password-wrapper">
+                <div class="glass-card lock-card" id="lockCard">
+                    <div class="lock-icon">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/></svg>
+                    </div>
+                    <h2 class="lock-title">Enter the Date</h2>
+                    <p class="lock-subtitle">Unlock the magic (YYYY-MM-DD or YYMMDD)</p>
+                    <div class="input-container">
+                        <input type="password" id="passwordInput" placeholder="Password" autocomplete="off" maxlength="10">
+                        <button id="unlockBtn">
+                            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"/></svg>
+                        </button>
+                    </div>
+                    <div class="error-msg" id="errorMsg">Incorrect Date</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Magical World (Scrollable Container for Scenes 3-9) -->
+        <div id="magicalWorld" class="scene scrollable-world">
+            
+            <!-- Scene 3: Valley Arrival -->
+            <section id="scene3-valley" class="world-scene">
+                <!-- Text removed to keep it cleaner and purely visual -->
+                <div class="scroll-hint">
+                    <span>Scroll gently</span>
+                    <div class="mouse-icon"><div class="wheel"></div></div>
+                </div>
+            </section>
+
+            <!-- Scene 4 & 5: Cake & Blowing -->
+            <section id="scene4-cake" class="world-scene">
+                <div class="scene-overlay" id="cakeDarkOverlay"></div>
+                <div class="cake-wrapper">
+                    <h2 class="age-text">Happy <span id="dynamicAge" class="gold-gradient"></span> Birthday</h2>
+                    <div class="realistic-cake-container">
+                        <img src="assets/images/cake.png" alt="Luxury Birthday Cake" class="cake-image" id="cakeImage">
+                        <!-- Candles will be appended here dynamically -->
+                        <div id="candlesContainer" class="candles-wrapper"></div>
+                    </div>
+                    <!-- Scene 5 Button -->
+                    <button id="blowCandlesBtn" class="luxury-button">
+                        <span class="btn-text">🎂 Blow the Candles</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Scene 6: Handwritten Letter -->
+            <section id="scene6-letter" class="world-scene">
+                <div class="letter-container">
+                    <div class="letter-paper">
+                        <div class="golden-edges"></div>
+                        <div class="wax-seal">H</div>
+                        <div class="letter-body" id="letterText"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scene 7: Gallery -->
+            <section id="scene7-gallery" class="world-scene">
+                <h2 class="gallery-title">Memories in Glass</h2>
+                <div class="gallery-grid">
+                    <div class="polaroid-card">
+                        <div class="polaroid-image img-1"></div>
+                        <div class="polaroid-caption">A Beautiful Day</div>
+                    </div>
+                    <div class="polaroid-card">
+                        <div class="polaroid-image img-2"></div>
+                        <div class="polaroid-caption">Joy</div>
+                    </div>
+                    <div class="polaroid-card">
+                        <div class="polaroid-image img-3"></div>
+                        <div class="polaroid-caption">Unforgettable</div>
+                    </div>
+                    <div class="polaroid-card">
+                        <div class="polaroid-image img-4"></div>
+                        <div class="polaroid-caption">Special Moments</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scene 9: Final Celebration -->
+            <section id="scene9-finale" class="world-scene">
+                <div class="finale-content">
+                    <h1 class="finale-title">Happy Birthday Hadjer ❤️</h1>
+                    <p class="finale-wishes">May your life always be filled with happiness, health, peace, success, unforgettable memories and beautiful surprises.</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/utils.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/fireworks.js"></script>
+    <script src="js/music.js"></script>
+    <script src="js/intro.js"></script>
+    <script src="js/password.js"></script>
+    <script src="js/cake.js"></script>
+    <script src="js/gallery.js"></script>
+    <script src="js/scene.js"></script>
+    <script src="js/parallax.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

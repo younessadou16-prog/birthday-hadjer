@@ -1,0 +1,273 @@
+/* ==========================================================================
+   Variables & Reset
+   ========================================================================== */
+:root {
+    --color-night: #060714;
+    --color-night-dark: #020208;
+    --color-purple: #4a1c40;
+    --color-lavender: #9a7bb5;
+    --color-rose: #d68798;
+    --color-gold: #d4af37;
+    --color-gold-light: #f3e5ab;
+    --color-cyan: #88d4d1;
+    --color-glass: rgba(20, 20, 30, 0.4);
+    --color-glass-border: rgba(255, 255, 255, 0.05);
+    
+    --font-primary: 'Poppins', sans-serif;
+    --font-heading: 'Playfair Display', serif;
+    --font-fantasy: 'Cormorant Garamond', serif;
+    --font-script: 'Great Vibes', cursive;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Main scroll controlled by JS or scroll container */
+    background-color: #03010a;
+    color: #fff;
+    font-family: var(--font-primary);
+    -webkit-font-smoothing: antialiased;
+    cursor: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-night-dark); }
+::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.4); border-radius: 10px; }
+
+/* ==========================================================================
+   Global UI & Cursors
+   ========================================================================== */
+.global-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#particlesCanvas { z-index: 1; }
+#fireworksCanvas { z-index: 100; }
+
+.custom-cursor, .custom-cursor-glow {
+    position: fixed;
+    top: 0; left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.custom-cursor {
+    width: 6px; height: 6px;
+    background: #fff;
+    box-shadow: 0 0 10px #fff;
+    transition: width 0.2s, height 0.2s;
+}
+
+.custom-cursor-glow {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    transition: transform 0.1s ease-out, width 0.2s, height 0.2s;
+}
+
+body.hovering .custom-cursor { width: 10px; height: 10px; background: var(--color-gold); box-shadow: 0 0 15px var(--color-gold); }
+body.hovering .custom-cursor-glow { width: 60px; height: 60px; border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.05); }
+
+/* ==========================================================================
+   Scenes Architecture
+   ========================================================================== */
+#appContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.scene {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 2s ease, transform 3s ease;
+    z-index: 10;
+}
+
+.scene.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Used for fly-through transitions */
+.scene.fly-past {
+    transform: scale(2) translateZ(1000px);
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* ==========================================================================
+   Scene 1: Intro Cinematic
+   ========================================================================== */
+#scene1-intro { background: #000; z-index: 50; display: flex; align-items: center; justify-content: center; }
+.intro-text-layer {
+    position: absolute;
+    font-family: var(--font-fantasy);
+    font-size: 4vw;
+    color: var(--color-gold-light);
+    opacity: 0;
+    text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    white-space: nowrap;
+}
+
+.portal {
+    position: absolute;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+}
+.portal-ring {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    border-radius: 50%; border: 1px solid var(--color-gold);
+}
+
+/* ==========================================================================
+   Scene 2: Password Screen
+   ========================================================================== */
+#scene2-password { z-index: 40; display: flex; align-items: center; justify-content: center; background: transparent; }
+.password-wrapper { z-index: 5; perspective: 1000px; }
+.glass-card {
+    background: var(--color-glass);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--color-glass-border);
+    padding: 60px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    transition: transform 0.3s;
+}
+.lock-icon { color: var(--color-lavender); width: 60px; height: 60px; margin: 0 auto 20px; }
+.lock-title { font-family: var(--font-heading); font-size: 2rem; color: #fff; margin-bottom: 10px; }
+.lock-subtitle { color: #aaa; margin-bottom: 30px; font-weight: 300; }
+.input-container { display: flex; position: relative; }
+.input-container input {
+    width: 100%; padding: 15px 50px 15px 20px;
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px; color: #fff; font-family: var(--font-primary); font-size: 1.2rem;
+    outline: none; transition: 0.3s;
+}
+.input-container input:focus { border-color: var(--color-gold); box-shadow: 0 0 20px rgba(212,175,55,0.2); }
+.input-container button {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--color-gold); width: 30px; height: 30px;
+    cursor: none;
+}
+.error-msg { color: #ff4757; margin-top: 15px; font-size: 0.9rem; opacity: 0; transition: 0.3s; }
+
+/* ==========================================================================
+   Magical World (Scenes 3-9)
+   ========================================================================== */
+.scrollable-world {
+    z-index: 30;
+    overflow-y: auto; overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+/* Background layers handled by background.css */
+.world-scene {
+    position: relative;
+    width: 100%; height: 100vh;
+    scroll-snap-align: start;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+}
+
+/* Scene 3: Valley */
+.fantasy-title { font-family: var(--font-heading); font-size: 6rem; color: var(--color-gold); text-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center; }
+.fantasy-subtitle { font-family: var(--font-script); font-size: 3rem; color: #fff; text-align: center; }
+.scroll-hint { position: absolute; bottom: 40px; display: flex; flex-direction: column; align-items: center; opacity: 0.5; }
+
+/* Scene 4 & 5: Cake */
+.cake-wrapper { position: relative; text-align: center; z-index: 20; }
+.age-text { font-family: var(--font-heading); font-size: 4rem; margin-bottom: 50px; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.gold-gradient { background: linear-gradient(to right, var(--color-gold-light), var(--color-gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.realistic-cake-container { position: relative; margin: 0 auto; width: 400px; height: 400px; }
+.cake-image { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); mix-blend-mode: screen; /* Fallback if PNG is not transparent */}
+.candles-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.luxury-button {
+    margin-top: 50px; padding: 15px 40px; background: rgba(20,20,30,0.8);
+    border: 1px solid var(--color-gold); border-radius: 30px;
+    color: var(--color-gold); font-family: var(--font-primary); font-size: 1.2rem;
+    cursor: none; transition: 0.3s; backdrop-filter: blur(10px);
+}
+.scene-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0); pointer-events: none; transition: background 2s ease; z-index: 15; }
+
+/* Scene 6: Letter */
+.letter-paper {
+    background: #f4e8d3; padding: 60px 80px; max-width: 800px;
+    border-radius: 5px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    position: relative; color: #2c1e16; font-family: var(--font-fantasy);
+    font-size: 1.5rem; line-height: 1.8;
+}
+.golden-edges { position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 1px solid rgba(212,175,55,0.5); pointer-events: none; }
+.wax-seal { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: #8b0000; border-radius: 50%; color: #fff; font-family: var(--font-heading); display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 10px rgba(0,0,0,0.5); }
+
+/* Scene 7: Gallery */
+.gallery-title { font-family: var(--font-heading); font-size: 3rem; margin-bottom: 50px; color: var(--color-gold); }
+.gallery-grid { display: flex; gap: 30px; perspective: 1000px; }
+.polaroid-card {
+    background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1); padding: 15px; padding-bottom: 40px;
+    border-radius: 10px; transition: 0.5s; position: relative; width: 250px;
+}
+.polaroid-image { width: 100%; height: 300px; background: #000; border-radius: 5px; }
+.polaroid-caption { font-family: var(--font-script); position: absolute; bottom: 10px; width: 100%; text-align: center; left: 0; font-size: 1.5rem; color: #ddd; }
+
+/* Scene 8: Premium Music Player */
+.premium-music-player { position: fixed; top: 30px; right: 30px; z-index: 100; font-family: var(--font-primary); }
+.player-glass { background: var(--color-glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--color-glass-border); padding: 15px 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(154,123,181,0.2); display: flex; flex-direction: column; gap: 10px; width: 300px; transition: transform 0.3s, box-shadow 0.3s; }
+.player-glass:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(212,175,55,0.2); }
+.player-top { display: flex; align-items: center; gap: 15px; }
+.song-info { display: flex; flex-direction: column; }
+.song-title { font-weight: 600; font-size: 1rem; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.song-artist { font-size: 0.8rem; color: var(--color-lavender); }
+.disc { width: 40px; height: 40px; background: conic-gradient(#333, #111, #333); border-radius: 50%; border: 2px solid var(--color-gold); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+.disc-hole { width: 8px; height: 8px; background: #000; border-radius: 50%; }
+
+/* Progress Bar */
+.progress-container { display: flex; align-items: center; gap: 10px; font-size: 0.75rem; color: #ccc; }
+.progress-bar-wrapper { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; cursor: pointer; position: relative; overflow: hidden; }
+.progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--color-lavender), var(--color-gold)); border-radius: 3px; transition: width 0.1s linear; }
+
+/* Player Controls */
+.player-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; }
+.icon-btn { background: none; border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: none; transition: all 0.3s ease; }
+.icon-btn svg { width: 24px; height: 24px; }
+.icon-btn.small-btn svg { width: 18px; height: 18px; }
+.icon-btn.main-play svg { width: 32px; height: 32px; }
+.icon-btn:hover { color: var(--color-gold); transform: scale(1.1); text-shadow: 0 0 10px var(--color-gold); }
+.icon-btn.active { color: var(--color-gold); }
+
+/* Volume */
+.volume-wrapper { display: flex; align-items: center; gap: 5px; }
+.premium-volume { width: 60px; -webkit-appearance: none; background: transparent; cursor: pointer; }
+.premium-volume::-webkit-slider-runnable-track { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+.premium-volume::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: var(--color-gold); margin-top: -4px; box-shadow: 0 0 5px var(--color-gold); transition: transform 0.2s; }
+.premium-volume::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* Start Experience Button Overlay */
+.start-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 200; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); transition: opacity 1s ease; }
+.luxury-button.pulse-glow { animation: pulseGlow 2s infinite alternate; font-size: 1.5rem; padding: 20px 50px; }
+
+/* Scene 9: Finale */
+.finale-content { text-align: center; }
+.finale-title { font-family: var(--font-heading); font-size: 5rem; color: var(--color-gold); margin-bottom: 30px; }
+.finale-wishes { font-family: var(--font-fantasy); font-size: 2rem; max-width: 800px; margin: 0 auto; line-height: 1.5; color: #ddd; }

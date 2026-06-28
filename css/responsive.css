@@ -1,0 +1,33 @@
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    .fantasy-title { font-size: 5rem; }
+    .fantasy-subtitle { font-size: 2.5rem; }
+    .gallery-grid { flex-wrap: wrap; justify-content: center; }
+}
+
+@media (max-width: 768px) {
+    .intro-text-layer { font-size: 8vw; }
+    .glass-card { padding: 40px 20px; width: 90%; }
+    .fantasy-title { font-size: 4rem; }
+    .fantasy-subtitle { font-size: 2rem; }
+    .realistic-cake-container { width: 300px; height: 300px; }
+    .age-text { font-size: 3rem; margin-bottom: 30px; }
+    .letter-paper { padding: 40px 30px; font-size: 1.2rem; width: 90%; margin: 0 auto; }
+    .gallery-title { font-size: 2.5rem; }
+    .polaroid-card { width: 200px; }
+    .polaroid-image { height: 250px; }
+    .finale-title { font-size: 3.5rem; }
+    .finale-wishes { font-size: 1.5rem; padding: 0 20px; }
+    .music-player { top: 20px; right: 20px; }
+}
+
+@media (max-width: 480px) {
+    .lock-title { font-size: 1.8rem; }
+    .fantasy-title { font-size: 3rem; }
+    .realistic-cake-container { width: 250px; height: 250px; }
+    .age-text { font-size: 2.5rem; }
+    .finale-title { font-size: 2.5rem; }
+}
