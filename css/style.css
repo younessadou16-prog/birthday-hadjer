@@ -25,11 +25,14 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     width: 100%;
-    height: 100%;
-    overflow: hidden; /* Main scroll controlled by JS or scroll container */
-    background-color: #03010a;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: #03010a;
+}
     color: #fff;
     font-family: var(--font-primary);
     -webkit-font-smoothing: antialiased;
