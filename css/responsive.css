@@ -31,3 +31,61 @@
     .age-text { font-size: 2.5rem; }
     .finale-title { font-size: 2.5rem; }
 }
+/* Mobile Fixes */
+
+html{
+    -webkit-text-size-adjust:100%;
+}
+
+body{
+    overflow-x:hidden;
+}
+
+img,
+canvas,
+video{
+    max-width:100%;
+    height:auto;
+}
+
+*{
+    max-width:100%;
+}
+
+@media (max-width:768px){
+
+    .glass-card{
+        width:95%;
+        padding:24px;
+    }
+
+    .gallery-grid{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:20px;
+    }
+
+    .polaroid-card{
+        width:100%;
+    }
+
+    .realistic-cake-container{
+        width:220px;
+        height:220px;
+    }
+
+    .fantasy-title{
+        font-size:2.5rem;
+    }
+
+    .fantasy-subtitle{
+        font-size:1.4rem;
+    }
+
+    .letter-paper{
+        width:95%;
+        padding:20px;
+        font-size:1rem;
+    }
+
+}
